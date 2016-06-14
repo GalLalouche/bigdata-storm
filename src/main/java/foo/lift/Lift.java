@@ -1,22 +1,33 @@
 package foo.lift;
 
-import foo.window.Rating;
 import org.apache.hadoop.hbase.util.Pair;
 
 import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Iterator;
 
-public class Lift extends LinkedList<Pair<Long, Double>> {
-  public static final Lift EMPTY = new Lift(Rating.NEUTRAL, Collections.EMPTY_LIST);
-  public final Rating rating;
+import foo.Movie;
 
-  public Lift(Rating rating, List<Pair<Long, Double>> pairs) {
+public class Lift implements Iterable<Pair<Long, Double>> {
+  public final LiftRating rating;
+  public final Movie m;
+  private final Iterable<Pair<Long, Double>> pairs;
+
+  public Lift(Movie m, LiftRating rating, Iterable<Pair<Long, Double>> pairs) {
     this.rating = rating;
-    addAll(pairs);
+    this.m = m;
+    this.pairs = pairs;
   }
 
-  public void add(long l, double v) {
-    add(Pair.newPair(l, v));
+  public static Lift empty(Movie m) {
+    return empty(m, LiftRating.NEG);
+  }
+
+  public static Lift empty(Movie m, LiftRating rating) {
+    return new Lift(m, rating, Collections.EMPTY_LIST);
+  }
+
+  @Override
+  public Iterator<Pair<Long, Double>> iterator() {
+    return pairs.iterator();
   }
 }

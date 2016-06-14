@@ -1,11 +1,13 @@
 package foo.window;
 
-import foo.Movie;
-import foo.hbase.StringConverter;
+import org.apache.hadoop.hbase.util.Bytes;
 
 import java.util.LinkedList;
 
-public class WindowConverter extends StringConverter<MovieRating, Window> {
+import foo.Movie;
+import foo.hbase.HBaseConverter;
+
+public class WindowConverter implements HBaseConverter<Window> {
   private static Rating decodeRating(String s) {
     int i = Integer.parseInt(s);
     switch (i) {
@@ -20,22 +22,6 @@ public class WindowConverter extends StringConverter<MovieRating, Window> {
     }
   }
 
-  @Override
-  protected Window build(LinkedList<MovieRating> list) {
-    return new Window(list);
-  }
-
-  @Override
-  protected MovieRating decode(String str) {
-    String[] movieSplit = str.split(",");
-    return new MovieRating(new Movie(Long.parseLong(movieSplit[0])), decodeRating(movieSplit[1]));
-  }
-
-  @Override
-  protected String encode(MovieRating movieRating) {
-    return movieRating.m.id + "," + encodeRating(movieRating.r);
-  }
-
   private int encodeRating(Rating r) {
     switch (r) {
       case NEGATIVE:
@@ -47,5 +33,32 @@ public class WindowConverter extends StringConverter<MovieRating, Window> {
       default:
         throw new AssertionError("Invalid rating: " + r);
     }
+  }
+
+  @Override
+  public Window fromBytes(byte[] bytes) {
+    String[] split = Bytes.toString(bytes).split(";");
+    Movie movie = new Movie(Long.parseLong(split[0]));
+    LinkedList<MovieRating> ratings = new LinkedList<>();
+    for (int i = 1; i < split.length; i++) {
+      String[] pair = split[i].split(",");
+      ratings.add(new MovieRating(Long.parseLong(pair[0]), decodeRating(pair[1])));
+    }
+    return new Window(movie, ratings);
+  }
+
+  @Override
+  public byte[] toBytes(Window movieRatings) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(movieRatings.m.id + ";");
+    for (MovieRating mr : movieRatings) {
+      sb.append(mr.m.id + "," + encodeRating(mr.r) + ";");
+    }
+    return Bytes.toBytes(sb.toString());
+  }
+
+  @Override
+  public byte[] extractKey(Window movieRatings) {
+    return Bytes.toBytes(movieRatings.m.id);
   }
 }

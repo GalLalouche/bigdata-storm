@@ -1,25 +1,22 @@
 package foo.lift;
 
+import java.io.IOException;
+
 import foo.Movie;
 import foo.hbase.BasicTable;
-import foo.window.Rating;
-import org.apache.commons.lang.NotImplementedException;
-import org.apache.hadoop.hbase.util.Bytes;
-import org.apache.hadoop.hbase.util.Pair;
-
-import java.util.List;
+import foo.hbase.BasicTableFactory;
 
 public class LiftGetter {
   private final LiftConverter converter = new LiftConverter();
-  private final BasicTable table = new BasicTable();
+  private final BasicTable table = BasicTableFactory.create("lifts");
 
-  public Lift getNegative(Movie m) {
-    List<Pair<Long, Double>> pairs = converter.fromBytes(table.load(Bytes.toBytes(m.id + ", pos")));
-    return new Lift(Rating.POSITIVE, pairs);
-  }
+  public LiftGetter() throws IOException {}
 
-  public Lift getPositive(Movie m){
-    List<Pair<Long, Double>> pairs = converter.fromBytes(table.load(Bytes.toBytes(m.id + ", neg")));
-    return new Lift(Rating.NEGATIVE, pairs);
+  public Lift getLift(Movie m, LiftRating rating) {
+    try {
+      return converter.fromBytes(table.load(converter.extractKey(Lift.empty(m, rating))));
+    } catch (IOException e) {
+      throw new AssertionError(e);
+    }
   }
 }

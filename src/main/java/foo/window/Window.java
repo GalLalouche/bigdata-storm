@@ -2,17 +2,20 @@ package foo.window;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
+
+import foo.Movie;
 
 public class Window implements Iterable<MovieRating> {
   static final int MAX_SIZE = 5;
   private final LinkedList<MovieRating> movies;
+  public final Movie m;
 
-  public Window() {
-    this(new LinkedList<MovieRating>());
+  public Window(Movie m) {
+    this(m, new LinkedList<MovieRating>());
   }
 
-  public Window(LinkedList<MovieRating> movies) {
+  public Window(Movie m, LinkedList<MovieRating> movies) {
+    this.m = m;
     this.movies = movies;
   }
 

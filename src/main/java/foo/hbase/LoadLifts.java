@@ -1,8 +1,5 @@
 package foo.hbase;
 
-import foo.lift.Lift;
-import foo.lift.LiftConverter;
-import foo.window.Rating;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.TableName;
@@ -15,9 +12,19 @@ import org.apache.hadoop.hbase.util.Pair;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
-public class LoadData {
+import foo.Movie;
+import foo.lift.Lift;
+import foo.lift.LiftConverter;
+import foo.lift.LiftRating;
+
+public class LoadLifts {
   private static Iterable<String> readLines(File f) throws FileNotFoundException {
     final Scanner s = new Scanner(f).useDelimiter("\n");
     return new Iterable<String>() {
@@ -32,6 +39,11 @@ public class LoadData {
           @Override
           public String next() {
             return s.next();
+          }
+
+          @Override
+          public void remove() {
+            throw new UnsupportedOperationException();
           }
         };
       }
@@ -59,9 +71,8 @@ public class LoadData {
     List<Put> puts = new LinkedList<>();
     for (Map.Entry<Long, List<Pair<Long, Double>>> foo : map.entrySet()) {
       Put p = new Put(Bytes.toBytes(foo + ", " + type.name().toLowerCase()));
-      Lift topK = new Lift(type.rating, foo.getValue());
-      topK.addAll(foo.getValue());
-      p.addColumn(Bytes.toBytes("top-k"), Bytes.toBytes(""), new LiftConverter().toBytes(topK));
+      Lift topK = new Lift(new Movie(foo.getKey()), type.rating, foo.getValue());
+      p.addColumn(Bytes.toBytes("family"), Bytes.toBytes(""), new LiftConverter().toBytes(topK));
       puts.add(p);
     }
     return puts;
@@ -82,13 +93,13 @@ public class LoadData {
   }
 
   private enum LiftType {
-    POS("D:\\Dropbox\\Big Data\\pig\\output1.txt", Rating.POSITIVE),
-    NEG("D:\\Dropbox\\Big Data\\pig\\output2.txt", Rating.NEGATIVE);
+    POS("D:\\Dropbox\\Big Data\\pig\\output1.txt", LiftRating.POS),
+    NEG("D:\\Dropbox\\Big Data\\pig\\output2.txt", LiftRating.NEG);
 
     private final String filePath;
-    private final Rating rating;
+    private final LiftRating rating;
 
-    LiftType(String filePath, Rating r) {
+    LiftType(String filePath, LiftRating r) {
       this.filePath = filePath;
       this.rating = r;
     }

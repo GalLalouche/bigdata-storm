@@ -10,4 +10,8 @@ public enum Rating {
       return NEUTRAL;
     return POSITIVE;
   }
+
+  public static Rating fromRating(boolean isPositive) {
+    return isPositive ? POSITIVE : NEGATIVE;
+  }
 }

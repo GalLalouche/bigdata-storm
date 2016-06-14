@@ -1,26 +1,21 @@
 package foo.lift;
 
 
-import foo.hbase.StringConverter;
-import org.apache.hadoop.hbase.util.Pair;
+import foo.hbase.HBaseConverter;
 
-import java.util.LinkedList;
-import java.util.List;
-
-public class LiftConverter extends StringConverter<Pair<Long, Double>, List<Pair<Long, Double>>> {
+public class LiftConverter implements HBaseConverter<Lift> {
   @Override
-  protected List<Pair<Long, Double>> build(LinkedList<Pair<Long, Double>> list) {
-    return list;
+  public Lift fromBytes(byte[] bytes) {
+    return null;
   }
 
   @Override
-  protected Pair<Long, Double> decode(String str) {
-    String[] pairSplit = str.split(",");
-    return Pair.newPair(Long.parseLong(pairSplit[0]), Double.parseDouble(pairSplit[1]));
+  public byte[] toBytes(Lift lift) {
+    return new byte[0];
   }
 
   @Override
-  protected String encode(Pair<Long, Double> p) {
-    return p.getFirst() + "," + p.getSecond();
+  public byte[] extractKey(Lift lift) {
+    return new byte[0];
   }
 }

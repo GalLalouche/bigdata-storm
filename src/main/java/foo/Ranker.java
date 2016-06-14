@@ -1,14 +1,15 @@
 package foo;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import foo.lift.Lift;
 import foo.lift.LiftGetter;
+import foo.lift.LiftRating;
 import foo.recommender.Recommender;
 import foo.window.MovieRating;
 import foo.window.Rating;
 import foo.window.Window;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class Ranker {
   private final LiftGetter liftGetter;
@@ -31,12 +32,12 @@ public class Ranker {
   private Lift getLift(MovieRating mr) {
     switch (mr.r) {
       case NEGATIVE:
-        return liftGetter.getNegative(mr.m);
+        return liftGetter.getLift(mr.m, LiftRating.NEG);
       case POSITIVE:
-        return liftGetter.getPositive(mr.m);
+        return liftGetter.getLift(mr.m, LiftRating.POS);
       default:
         assert mr.r == Rating.NEUTRAL;
-        return Lift.EMPTY;
+        return Lift.empty(mr.m);
     }
   }
 }

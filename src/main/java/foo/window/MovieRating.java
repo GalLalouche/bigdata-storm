@@ -6,6 +6,10 @@ public class MovieRating {
   public final Movie m;
   public final Rating r;
 
+  public MovieRating(long l, Rating r) {
+    this(new Movie(l), r);
+  }
+
   public static MovieRating of(long l, double r) {
     return new MovieRating(new Movie(l), Rating.fromRating(r));
   }
