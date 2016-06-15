@@ -1,10 +1,9 @@
 package foo.window;
 
-import foo.Movie;
-import foo.User;
-
 import java.util.Iterator;
 import java.util.LinkedList;
+
+import foo.User;
 
 public class Window implements Iterable<MovieRating> {
   static final int MAX_SIZE = 5;
@@ -15,15 +14,18 @@ public class Window implements Iterable<MovieRating> {
     this(u, new LinkedList<MovieRating>());
   }
 
-  public Window(User u, LinkedList<MovieRating> movies) {
+  Window(User u, LinkedList<MovieRating> movies) {
     this.u = u;
     this.movies = movies;
   }
 
-  public void addMovie(MovieRating m) {
+  public Window addMovie(MovieRating m) {
+    LinkedList<MovieRating> list = new LinkedList<>();
+    list.addAll(movies);
     if (isFull())
-      movies.removeLast();
-    movies.addFirst(m);
+      list.removeLast();
+    list.addFirst(m);
+    return new Window(u, list);
   }
 
   public boolean isFull() {
@@ -41,7 +43,6 @@ public class Window implements Iterable<MovieRating> {
     if (o == null || getClass() != o.getClass()) return false;
 
     return movies.equals(((Window) o).movies);
-
   }
 
   @Override

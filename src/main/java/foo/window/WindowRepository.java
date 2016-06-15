@@ -1,15 +1,15 @@
 package foo.window;
 
 import foo.User;
-import foo.hbase.HBaseAPI;
+import foo.hbase.GenericHBaseWrapper;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
 
 public class WindowRepository {
-  private final HBaseAPI<Window> table;
+  private final GenericHBaseWrapper<Window> table;
 
-  public WindowRepository(HBaseAPI<Window> table) {
+  public WindowRepository(GenericHBaseWrapper<Window> table) {
     this.table = table;
   }
 

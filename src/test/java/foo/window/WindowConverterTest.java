@@ -1,17 +1,13 @@
-package foo.hbase;
+package foo.window;
 
 import static org.junit.Assert.assertEquals;
 
-import foo.User;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import foo.Movie;
-import foo.window.MovieRating;
-import foo.window.Window;
-import foo.window.WindowConverter;
+import foo.User;
 
 public class WindowConverterTest {
   @Test

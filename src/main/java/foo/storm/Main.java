@@ -9,7 +9,7 @@ import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import foo.hbase.BasicTable;
 import foo.hbase.BasicTableFactory;
-import foo.hbase.HBaseAPI;
+import foo.hbase.GenericHBaseWrapper;
 import foo.lift.LiftGetter;
 import foo.window.WindowConverter;
 import foo.window.WindowRepository;
@@ -23,7 +23,7 @@ public class Main {
     config.setDebug(false);
     BasicTable windows = BasicTableFactory.create("windows");
     windows.clear();
-    WindowRepository windowRepository = new WindowRepository(new HBaseAPI<>(new WindowConverter(), windows));
+    WindowRepository windowRepository = new WindowRepository(new GenericHBaseWrapper<>(new WindowConverter(), windows));
     LiftGetter liftGetter = new LiftGetter();
     ILocalCluster cluster = new LocalCluster();
     try {

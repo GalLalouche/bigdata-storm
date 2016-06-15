@@ -1,5 +1,9 @@
 package foo.storm;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
+
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -10,33 +14,27 @@ import foo.Movie;
 import foo.Ranker;
 import foo.User;
 import foo.hbase.BasicTableFactory;
-import foo.hbase.HBaseAPI;
+import foo.hbase.GenericHBaseWrapper;
 import foo.lift.LiftGetter;
 import foo.recommender.PosRecommender;
-import foo.window.*;
-import org.apache.commons.lang.time.StopWatch;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Random;
+import foo.window.MovieRating;
+import foo.window.Rating;
+import foo.window.Window;
+import foo.window.WindowConverter;
+import foo.window.WindowRepository;
 
 public class RecommendBolt extends BaseRichBolt {
-  static private WindowRepository windowRepository;
-  static private Ranker ranker;
+  private static WindowRepository windowRepository;
+  private static Ranker ranker;
   private OutputCollector outputCollector;
-  Random r = new Random();
 
   static {
     try {
-      windowRepository = new WindowRepository(new HBaseAPI<>(new WindowConverter(), BasicTableFactory.create("windows")));
+      windowRepository = new WindowRepository(new GenericHBaseWrapper<>(new WindowConverter(), BasicTableFactory.create("windows")));
       ranker = new Ranker(new LiftGetter(), new PosRecommender());
     } catch (IOException e) {
       throw new AssertionError(e);
     }
-  }
-
-  private static void getWindowRepository() {
   }
 
   @Override
@@ -44,16 +42,13 @@ public class RecommendBolt extends BaseRichBolt {
     this.outputCollector = outputCollector;
   }
 
-  /**
-   * Adds the next movie the user rated
-   */
   private Double handleMovie(MovieRating mr, Window w) {
     if (w.isFull() == false)
       return null;
 
     Integer recommendations = ranker.recommend(w, mr.m);
     if (recommendations == null || mr.r == Rating.NEUTRAL)
-      return null;
+      return 0.0;
 
     return (mr.r == Rating.POSITIVE ? 1.0 : -1.0) / recommendations;
   }
@@ -69,8 +64,8 @@ public class RecommendBolt extends BaseRichBolt {
     Double updatedQ = handleMovie(new MovieRating(movieId, rating), w);
     if (updatedQ != null)
       outputCollector.emit(Arrays.<Object>asList(updatedQ));
-    w.addMovie(new MovieRating(movieId, rating));
-    windowRepository.saveWindow(w);
+    Window updatedW = w.addMovie(new MovieRating(movieId, rating));
+    windowRepository.saveWindow(updatedW);
   }
 
   @Override

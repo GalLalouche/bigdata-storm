@@ -1,14 +1,21 @@
 package foo.hbase;
 
-import foo.Movie;
-import foo.lift.Lift;
-import foo.lift.LiftConverter;
-import foo.lift.LiftRating;
 import org.apache.hadoop.hbase.util.Pair;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+import foo.Movie;
+import foo.lift.Lift;
+import foo.lift.LiftConverter;
+import foo.lift.LiftRating;
 
 public class LoadLifts {
   private static Iterable<String> readLines(File f) throws FileNotFoundException {
@@ -39,7 +46,7 @@ public class LoadLifts {
   public static void main(String[] args) throws Exception {
     BasicTable table = BasicTableFactory.create("lifts");
     table.clear();
-    HBaseAPI hbase = new HBaseAPI(new LiftConverter(), table);
+    GenericHBaseWrapper hbase = new GenericHBaseWrapper(new LiftConverter(), table);
     hbase.save(createLifts(LiftType.POS));
     hbase.save(createLifts(LiftType.NEG));
   }

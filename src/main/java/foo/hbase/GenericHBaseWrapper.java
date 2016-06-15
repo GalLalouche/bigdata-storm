@@ -1,6 +1,5 @@
 package foo.hbase;
 
-import foo.window.Window;
 import org.apache.hadoop.hbase.util.Pair;
 
 import java.io.IOException;
@@ -8,11 +7,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 
-public class HBaseAPI<T>{
+public class GenericHBaseWrapper<T>{
   private final HBaseConverter<T> converter;
   private final BasicTable table;
 
-  public HBaseAPI(HBaseConverter<T> converter, BasicTable table) {
+  public GenericHBaseWrapper(HBaseConverter<T> converter, BasicTable table) {
     this.converter = converter;
     this.table = table;
   }

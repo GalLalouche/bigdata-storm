@@ -1,13 +1,14 @@
 package foo.lift;
 
 
-import foo.Movie;
-import foo.hbase.HBaseConverter;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.util.Pair;
 
 import java.util.Collection;
 import java.util.LinkedList;
+
+import foo.Movie;
+import foo.hbase.HBaseConverter;
 
 public class LiftConverter implements HBaseConverter<Lift> {
   @Override
