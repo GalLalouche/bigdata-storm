@@ -1,11 +1,10 @@
 package foo.window;
 
+import foo.User;
+import foo.hbase.HBaseConverter;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.util.LinkedList;
-
-import foo.Movie;
-import foo.hbase.HBaseConverter;
 
 public class WindowConverter implements HBaseConverter<Window> {
   private static Rating decodeRating(String s) {
@@ -38,19 +37,21 @@ public class WindowConverter implements HBaseConverter<Window> {
   @Override
   public Window fromBytes(byte[] bytes) {
     String[] split = Bytes.toString(bytes).split(";");
-    Movie movie = new Movie(Long.parseLong(split[0]));
+    User user = new User(Long.parseLong(split[0]));
     LinkedList<MovieRating> ratings = new LinkedList<>();
     for (int i = 1; i < split.length; i++) {
+      if (split[i].isEmpty())
+        continue;
       String[] pair = split[i].split(",");
       ratings.add(new MovieRating(Long.parseLong(pair[0]), decodeRating(pair[1])));
     }
-    return new Window(movie, ratings);
+    return new Window(user, ratings);
   }
 
   @Override
   public byte[] toBytes(Window movieRatings) {
     StringBuilder sb = new StringBuilder();
-    sb.append(movieRatings.m.id + ";");
+    sb.append(movieRatings.u.id + ";");
     for (MovieRating mr : movieRatings) {
       sb.append(mr.m.id + "," + encodeRating(mr.r) + ";");
     }
@@ -58,7 +59,7 @@ public class WindowConverter implements HBaseConverter<Window> {
   }
 
   @Override
-  public byte[] extractKey(Window movieRatings) {
-    return Bytes.toBytes(movieRatings.m.id);
+  public byte[] extractKey(Window w) {
+    return Bytes.toBytes(w.u.id);
   }
 }

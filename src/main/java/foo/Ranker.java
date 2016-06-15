@@ -1,8 +1,5 @@
 package foo;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import foo.lift.Lift;
 import foo.lift.LiftGetter;
 import foo.lift.LiftRating;
@@ -10,6 +7,9 @@ import foo.recommender.Recommender;
 import foo.window.MovieRating;
 import foo.window.Rating;
 import foo.window.Window;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class Ranker {
   private final LiftGetter liftGetter;

@@ -1,11 +1,10 @@
 package foo.lift;
 
+import foo.Movie;
 import org.apache.hadoop.hbase.util.Pair;
 
 import java.util.Collections;
 import java.util.Iterator;
-
-import foo.Movie;
 
 public class Lift implements Iterable<Pair<Long, Double>> {
   public final LiftRating rating;
@@ -29,5 +28,14 @@ public class Lift implements Iterable<Pair<Long, Double>> {
   @Override
   public Iterator<Pair<Long, Double>> iterator() {
     return pairs.iterator();
+  }
+
+  @Override
+  public String toString() {
+    return "Lift{" +
+        "rating=" + rating +
+        ", m=" + m +
+        ", pairs=" + pairs +
+        '}';
   }
 }

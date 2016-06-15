@@ -1,21 +1,22 @@
 package foo.window;
 
+import foo.Movie;
+import foo.User;
+
 import java.util.Iterator;
 import java.util.LinkedList;
-
-import foo.Movie;
 
 public class Window implements Iterable<MovieRating> {
   static final int MAX_SIZE = 5;
   private final LinkedList<MovieRating> movies;
-  public final Movie m;
+  public final User u;
 
-  public Window(Movie m) {
-    this(m, new LinkedList<MovieRating>());
+  public Window(User u) {
+    this(u, new LinkedList<MovieRating>());
   }
 
-  public Window(Movie m, LinkedList<MovieRating> movies) {
-    this.m = m;
+  public Window(User u, LinkedList<MovieRating> movies) {
+    this.u = u;
     this.movies = movies;
   }
 

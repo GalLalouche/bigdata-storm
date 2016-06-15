@@ -4,7 +4,10 @@ import foo.Movie;
 import foo.lift.Lift;
 import org.apache.hadoop.hbase.util.Pair;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /** Gives increased weight to the the last movies watched. */
 public class RecentRecommender extends Recommender {

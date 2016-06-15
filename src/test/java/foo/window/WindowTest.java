@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import foo.User;
 import org.junit.Test;
 
 import java.util.Iterator;
@@ -11,7 +12,7 @@ import java.util.Iterator;
 import foo.Movie;
 
 public class WindowTest {
-  private final Window $ = new Window(new Movie(1));
+  private final Window $ = new Window(new User(1));
 
   @Test
   public void noPreviousMovies_addMovie() throws Exception {

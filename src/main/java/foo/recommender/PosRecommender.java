@@ -1,13 +1,12 @@
 package foo.recommender;
 
+import foo.Movie;
+import foo.lift.Lift;
+import foo.lift.LiftRating;
 import org.apache.hadoop.hbase.util.Pair;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import foo.Movie;
-import foo.lift.Lift;
-import foo.lift.LiftRating;
 
 /** Gives a higher weight to PosLift. */
 public class PosRecommender extends Recommender {

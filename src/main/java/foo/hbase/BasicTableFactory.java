@@ -27,6 +27,6 @@ public class BasicTableFactory {
 
   static public BasicTable create(String tableName) throws IOException {
     Table table = connection.getTable(TableName.valueOf(tableName));
-    return new BasicTable(table, Bytes.toBytes("family"));
+    return new BasicTable(table, connection.getAdmin(), Bytes.toBytes("family"));
   }
 }

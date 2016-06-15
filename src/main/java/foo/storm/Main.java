@@ -7,28 +7,37 @@ import backtype.storm.LocalCluster;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
+import foo.hbase.BasicTable;
+import foo.hbase.BasicTableFactory;
+import foo.hbase.HBaseAPI;
+import foo.lift.LiftGetter;
+import foo.window.WindowConverter;
+import foo.window.WindowRepository;
 
 public class Main {
 
-  public static final int PARALLELISM_HINT = 8;
+  public static final int PARALLELISM_HINT = 80;
 
   public static void main(String[] args) throws Exception {
     Config config = new Config();
     config.setDebug(false);
-
+    BasicTable windows = BasicTableFactory.create("windows");
+    windows.clear();
+    WindowRepository windowRepository = new WindowRepository(new HBaseAPI<>(new WindowConverter(), windows));
+    LiftGetter liftGetter = new LiftGetter();
     ILocalCluster cluster = new LocalCluster();
     try {
       TopologyBuilder b = new TopologyBuilder();
       b.setSpout("movies", new MoviesSpout());
       b.setBolt("split", new SplittingBolt(), PARALLELISM_HINT).shuffleGrouping("movies");
       b.setBolt("recommend", new RecommendBolt(), PARALLELISM_HINT).fieldsGrouping("split", new Fields("userId"));
-//    b.setBolt("QAdder", new QAdder(), 8).shuffleGrouping("recommend");
-//    b.setBolt("QAdderFinal", new QAdder(), 1).globalGrouping("QAdder");
+      b.setBolt("QAdder", new QAdder()).globalGrouping("recommend");
       StormTopology topology = b.createTopology();
       cluster.submitTopology("Movies", config, topology);
-
-      Thread.sleep(10_000);
-
+      cluster.activate("Movies");
+      Thread.sleep(1_000_000_000);
+    } catch (Exception e) {
+      e.printStackTrace();
     } finally {
       cluster.shutdown();
       System.exit(0);

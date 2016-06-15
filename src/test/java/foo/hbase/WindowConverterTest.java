@@ -2,6 +2,7 @@ package foo.hbase;
 
 import static org.junit.Assert.assertEquals;
 
+import foo.User;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -15,7 +16,7 @@ import foo.window.WindowConverter;
 public class WindowConverterTest {
   @Test
   public void name() throws Exception {
-    Window w = new Window(new Movie(1),
+    Window w = new Window(new User(1),
         new LinkedList<>(Arrays.asList(MovieRating.of(1L, 2.0), MovieRating.of(2L, 4.0))));
     WindowConverter $ = new WindowConverter();
     assertEquals(w, $.fromBytes($.toBytes(w)));

@@ -2,7 +2,6 @@ package foo.storm;
 
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
-import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
@@ -30,7 +29,7 @@ public class MoviesSpout extends BaseRichSpout {
   @Override
   public void nextTuple() {
     while (scanner.hasNext())
-    collector.emit(Arrays.<Object>asList(scanner.next()));
+      collector.emit(Arrays.<Object>asList(scanner.next()));
   }
 
   @Override
